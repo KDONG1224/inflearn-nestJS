@@ -37,25 +37,25 @@ Injectable -> provider 란 뜻으로 이해?
 
 # Summary
 
-일반적으로 요청 수명 주기는 다음과 같습니다.
+> 일반적으로 요청 수명 주기는 다음과 같습니다.
 
-Incoming request
-Globally bound middleware
-Module bound middleware
-Global guards
-Controller guards
-Route guards
-Global interceptors (pre-controller)
-Controller interceptors (pre-controller)
-Route interceptors (pre-controller)
-Global pipes
-Controller pipes
-Route pipes
-Route parameter pipes
-Controller (method handler)
-Service (if exists)
-Route interceptor (post-request)
-Controller interceptor (post-request)
-Global interceptor (post-request)
-Exception filters (route, then controller, then global)
-Server response
+Incoming request <br />
+Globally bound middleware <br />
+Module bound middleware <br />
+Global guards <br />
+Controller guards <br />
+Route guards <br />
+Global interceptors (pre-controller) <br />
+Controller interceptors (pre-controller) <br />
+Route interceptors (pre-controller) <br />
+Global pipes <br />
+Controller pipes <br />
+Route pipes <br />
+Route parameter pipes <br />
+Controller (method handler) <br />
+Service (if exists) <br />
+Route interceptor (post-request) <br />
+Controller interceptor (post-request) <br />
+Global interceptor (post-request) <br />
+Exception filters (route, then controller, then global) <br />
+Server response <br />
