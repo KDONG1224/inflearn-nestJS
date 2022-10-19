@@ -8,6 +8,23 @@ import { Cat } from '../schema/cats.schema';
 export class CatsRepository {
   constructor(@InjectModel(Cat.name) private readonly catModel: Model<Cat>) {}
 
+  async findAll() {
+    return await this.catModel.find();
+  }
+
+  async findByIdAndUpdateImg(catId: string, fileName: string) {
+    console.log(catId);
+    const cat = await this.catModel.findById(catId);
+
+    cat.imgUrl = `http://localhost:8000/media/${fileName}`;
+
+    const newCat = await cat.save();
+
+    console.log('== newCat == : ', newCat);
+
+    return newCat.readOnlyData;
+  }
+
   async findCatByIdWithoutPassword(catId: string): Promise<Cat | null> {
     // select 문법
     // 패스워드를 빼고 가지고 오고 싶다면 -> select('-password');

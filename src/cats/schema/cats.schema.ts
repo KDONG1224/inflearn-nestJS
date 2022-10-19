@@ -50,11 +50,13 @@ export class Cat extends Document {
   @IsString()
   password: string;
 
-  @Prop()
+  @Prop({
+    default: 'https://kdong1224.github.io/portfolio/assets/img/main.jpg',
+  })
   @IsString()
   imgUrl: string;
 
-  readonly readOnlyData: { id: string; email: string; name: string };
+  readonly readOnlyData: { id: string; email: string; name: string; imgUrl: string };
 }
 
 export const CatSchema = SchemaFactory.createForClass(Cat);
@@ -64,5 +66,6 @@ CatSchema.virtual('readOnlyData').get(function (this: Cat) {
     id: this.id,
     email: this.email,
     name: this.name,
+    imgUrl: this.imgUrl,
   };
 });

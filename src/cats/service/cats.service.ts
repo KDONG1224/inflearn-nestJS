@@ -2,10 +2,17 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CatRequestDto } from '../dto/cats.request.dto';
 import * as bcrypt from 'bcrypt';
 import { CatsRepository } from '../repository/cats.repository';
+import { Cat } from '../schema/cats.schema';
 
 @Injectable()
 export class CatsService {
   constructor(private readonly catsRepository: CatsRepository) {}
+
+  async getAllCat() {
+    const allCat = await this.catsRepository.findAll();
+    const readOnlyCats = allCat.map((cat) => cat.readOnlyData);
+    return readOnlyCats;
+  }
 
   async signUp(body: CatRequestDto) {
     const { email, password } = body;
@@ -24,5 +31,17 @@ export class CatsService {
     });
 
     return cat.readOnlyData;
+  }
+
+  async uploadImg(cat: Cat, files: Express.Multer.File[]) {
+    const fileName = `cats/${files[0].filename}`;
+
+    console.log('== fileName == : ', fileName);
+
+    const newCat = await this.catsRepository.findByIdAndUpdateImg(cat.id, fileName);
+
+    console.log('== newCat == : ', newCat);
+
+    return newCat;
   }
 }

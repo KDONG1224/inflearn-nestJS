@@ -3,10 +3,12 @@ import {
   Controller,
   Get,
   Post,
+  UploadedFiles,
   UseFilters,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { LoginRequestDto } from 'src/auth/dto/login.request.dto';
 import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
@@ -14,8 +16,10 @@ import { AuthService } from 'src/auth/service/auth.service';
 import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { HttpExceptionFilter } from 'src/common/exceptions/http-exception.filter';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
+import { multerOptions } from 'src/common/utils/multer.options';
 import { ReadOnlyCatDto } from '../dto/cat.dto';
 import { CatRequestDto } from '../dto/cats.request.dto';
+import { Cat } from '../schema/cats.schema';
 
 import { CatsService } from '../service/cats.service';
 
@@ -58,16 +62,21 @@ export class CatsController {
     return this.authService.jwtLogIn(data);
   }
 
-  // 프론트에서 jwt를 지우면 구현이 되기 때문에 필요없음
-  // @ApiOperation({ summary: '로그아웃' })
-  // @Post('logout')
-  // logOut() {
-  //   return 'logout';
-  // }
-
   @ApiOperation({ summary: '이미지 업로드' })
-  @Post('upload/cats')
-  uploadCatImg() {
-    return 'uploadImg';
+  @UseInterceptors(FilesInterceptor('image', 10, multerOptions('cats')))
+  @UseGuards(JwtAuthGuard)
+  @Post('upload')
+  uploadCatImg(@UploadedFiles() files: Array<Express.Multer.File>, @CurrentUser() cat: Cat) {
+    console.log('== files == : ', files);
+    // return {
+    //   image: `http://localhost:8000/media/cats/${files[0].filename}`,
+    // };
+    return this.catsService.uploadImg(cat, files);
+  }
+
+  @ApiOperation({ summary: '모든 고양이 가져오기' })
+  @Get('all')
+  getAllCat() {
+    return this.catsService.getAllCat();
   }
 }

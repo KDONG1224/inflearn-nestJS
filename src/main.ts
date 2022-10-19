@@ -4,9 +4,11 @@ import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 import * as expressBasicAuth from 'express-basic-auth';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/exceptions/http-exception.filter';
+import * as path from 'path';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   // class-validation 사용하려면 설정
   app.useGlobalPipes(new ValidationPipe());
@@ -24,6 +26,11 @@ async function bootstrap() {
       },
     }),
   );
+
+  // 파일 업로드 관련 설정
+  app.useStaticAssets(path.join(__dirname, './common', 'uploads'), {
+    prefix: '/media',
+  });
 
   // swagger 설정
   const config = new DocumentBuilder()
