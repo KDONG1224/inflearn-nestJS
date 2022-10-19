@@ -1,5 +1,17 @@
-import { Body, Controller, Get, Post, UseFilters, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { LoginRequestDto } from 'src/auth/dto/login.request.dto';
+import { JwtAuthGuard } from 'src/auth/jwt/jwt.guard';
+import { AuthService } from 'src/auth/service/auth.service';
+import { CurrentUser } from 'src/common/decorators/user.decorator';
 import { HttpExceptionFilter } from 'src/common/exceptions/http-exception.filter';
 import { SuccessInterceptor } from 'src/common/interceptors/success.interceptor';
 import { ReadOnlyCatDto } from '../dto/cat.dto';
@@ -11,12 +23,17 @@ import { CatsService } from '../service/cats.service';
 @UseInterceptors(SuccessInterceptor)
 @UseFilters(HttpExceptionFilter)
 export class CatsController {
-  constructor(private readonly catsService: CatsService) {}
+  constructor(
+    private readonly catsService: CatsService,
+    private readonly authService: AuthService,
+  ) {}
 
   @ApiOperation({ summary: '현재 고양이 가져오기' })
+  @UseGuards(JwtAuthGuard)
   @Get()
-  getCurrentCat() {
-    return 'current cat';
+  getCurrentCat(@CurrentUser() cat) {
+    console.log('== cat == : ', cat);
+    return cat.readOnlyData;
   }
 
   @ApiResponse({
@@ -36,15 +53,17 @@ export class CatsController {
 
   @ApiOperation({ summary: '로그인' })
   @Post('login')
-  logIn() {
-    return 'login';
+  logIn(@Body() data: LoginRequestDto) {
+    console.log('== login : data == : ', data);
+    return this.authService.jwtLogIn(data);
   }
 
-  @ApiOperation({ summary: '로그아웃' })
-  @Post('logout')
-  logOut() {
-    return 'logout';
-  }
+  // 프론트에서 jwt를 지우면 구현이 되기 때문에 필요없음
+  // @ApiOperation({ summary: '로그아웃' })
+  // @Post('logout')
+  // logOut() {
+  //   return 'logout';
+  // }
 
   @ApiOperation({ summary: '이미지 업로드' })
   @Post('upload/cats')

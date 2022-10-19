@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
+import * as expressBasicAuth from 'express-basic-auth';
 import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './common/exceptions/http-exception.filter';
 
@@ -12,6 +13,17 @@ async function bootstrap() {
 
   // 에러처리 글로벌로 설정
   app.useGlobalFilters(new HttpExceptionFilter());
+
+  // 보안 설정
+  app.use(
+    ['/docs', '/docs-json'],
+    expressBasicAuth({
+      challenge: true,
+      users: {
+        [process.env.SWAGGER_USER]: process.env.SWAGGER_PASSWORD,
+      },
+    }),
+  );
 
   // swagger 설정
   const config = new DocumentBuilder()

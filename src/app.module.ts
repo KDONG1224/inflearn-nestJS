@@ -14,12 +14,18 @@ import { AppService } from './app.service';
 
 // common
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
+import { AuthModule } from './auth/module/auth.module';
 
 // libraries
 import * as mongoose from 'mongoose';
 
 @Module({
-  imports: [ConfigModule.forRoot(), MongooseModule.forRoot(process.env.MONGODB_URI), CatsModule],
+  imports: [
+    ConfigModule.forRoot(),
+    MongooseModule.forRoot(process.env.MONGODB_URI),
+    CatsModule,
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

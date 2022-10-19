@@ -8,6 +8,19 @@ import { Cat } from '../schema/cats.schema';
 export class CatsRepository {
   constructor(@InjectModel(Cat.name) private readonly catModel: Model<Cat>) {}
 
+  async findCatByIdWithoutPassword(catId: string): Promise<Cat | null> {
+    // select 문법
+    // 패스워드를 빼고 가지고 오고 싶다면 -> select('-password');
+    // 이메일과 이름만 가지고 오고 싶다면 -> select('email name')
+    const cat = await this.catModel.findById(catId).select('-password');
+    return cat;
+  }
+
+  async findCatByEmail(email: string): Promise<Cat | null> {
+    const cat = await this.catModel.findOne({ email });
+    return cat;
+  }
+
   async existsByEmail(email: string): Promise<boolean> {
     try {
       const result = (await this.catModel.exists({ email })) ? true : false;
