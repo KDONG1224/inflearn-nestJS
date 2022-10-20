@@ -21,7 +21,7 @@ export class CatsRepository {
     console.log(catId);
     const cat = await this.catModel.findById(catId);
 
-    cat.imgUrl = `http://localhost:8000/media/${fileName}`;
+    cat.imgUrl = fileName;
 
     const newCat = await cat.save();
 

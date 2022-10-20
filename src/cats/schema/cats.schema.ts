@@ -69,7 +69,7 @@ _CatSchema.virtual('readOnlyData').get(function (this: Cat) {
     id: this.id,
     email: this.email,
     name: this.name,
-    imgUrl: this.imgUrl,
+    imgUrl: `https://kdong-nest-cat.s3.ap-northeast-2.amazonaws.com/${this.imgUrl}`,
     comments: this.comments,
   };
 });
