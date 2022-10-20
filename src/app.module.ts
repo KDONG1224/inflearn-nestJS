@@ -15,6 +15,7 @@ import { AppService } from './app.service';
 // common
 import { LoggerMiddleware } from './common/middlewares/logger.middleware';
 import { AuthModule } from './auth/module/auth.module';
+import { CommentsModule } from './comments/module/comments.module';
 
 // libraries
 import * as mongoose from 'mongoose';
@@ -25,6 +26,7 @@ import * as mongoose from 'mongoose';
     MongooseModule.forRoot(process.env.MONGODB_URI),
     CatsModule,
     AuthModule,
+    CommentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

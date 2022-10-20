@@ -7,6 +7,7 @@ import { Document, SchemaOptions } from 'mongoose';
 // class-validator
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Comments } from 'src/comments/schema/comments.schema';
 
 const options: SchemaOptions = {
   timestamps: true, // create, update 날짜 노출 여부
@@ -57,15 +58,29 @@ export class Cat extends Document {
   imgUrl: string;
 
   readonly readOnlyData: { id: string; email: string; name: string; imgUrl: string };
+
+  readonly comments: Comments[];
 }
 
-export const CatSchema = SchemaFactory.createForClass(Cat);
+const _CatSchema = SchemaFactory.createForClass(Cat);
 
-CatSchema.virtual('readOnlyData').get(function (this: Cat) {
+_CatSchema.virtual('readOnlyData').get(function (this: Cat) {
   return {
     id: this.id,
     email: this.email,
     name: this.name,
     imgUrl: this.imgUrl,
+    comments: this.comments,
   };
 });
+
+_CatSchema.virtual('comments', {
+  ref: 'comments',
+  localField: '_id',
+  foreignField: 'info',
+});
+
+_CatSchema.set('toObject', { virtuals: true });
+_CatSchema.set('toJSON', { virtuals: true });
+
+export const CatSchema = _CatSchema;

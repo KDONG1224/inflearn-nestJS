@@ -1,6 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model, Types } from 'mongoose';
+import { CommentsSchema } from 'src/comments/schema/comments.schema';
 import { CatRequestDto } from '../dto/cats.request.dto';
 import { Cat } from '../schema/cats.schema';
 
@@ -9,7 +10,11 @@ export class CatsRepository {
   constructor(@InjectModel(Cat.name) private readonly catModel: Model<Cat>) {}
 
   async findAll() {
-    return await this.catModel.find();
+    const CommentsModel = mongoose.model('comments', CommentsSchema);
+
+    const result = await this.catModel.find().populate('comments', CommentsModel);
+
+    return result;
   }
 
   async findByIdAndUpdateImg(catId: string, fileName: string) {
@@ -25,7 +30,7 @@ export class CatsRepository {
     return newCat.readOnlyData;
   }
 
-  async findCatByIdWithoutPassword(catId: string): Promise<Cat | null> {
+  async findCatByIdWithoutPassword(catId: string | Types.ObjectId): Promise<Cat | null> {
     // select 문법
     // 패스워드를 빼고 가지고 오고 싶다면 -> select('-password');
     // 이메일과 이름만 가지고 오고 싶다면 -> select('email name')
