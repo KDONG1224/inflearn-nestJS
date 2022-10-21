@@ -19,17 +19,20 @@ import { CommentsModule } from './comments/module/comments.module';
 
 // libraries
 import * as mongoose from 'mongoose';
+import { AwsService } from './aws.service';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     MongooseModule.forRoot(process.env.MONGODB_URI),
     CatsModule,
     AuthModule,
     CommentsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AwsService],
 })
 export class AppModule implements NestModule {
   private readonly isDev: boolean = process.env.MODE === 'dev' ? true : false;
